@@ -5,18 +5,26 @@ var gpio = require('rpi-gpio');
 var express = require('express');
 var app = express();
 var CronJob = require('cron').CronJob;
-var isOn = true;
 
 // Turn on the Light on start up
 gpio.setup(16, gpio.DIR_OUT, start_lights);
 function start_lights() { 
- // Set the cron job to turn the light on/off at 9:00am and 9:00pm
- var job = new CronJob('00 00 09 * * *', function() {
+ // Set the cron job to turn the light on/off at 9:00am EST and 9:00pm EST
+ var job = new CronJob('0 0 14 * * *', function() {
    // Cycle the light
-   gpio.write(16, isOn, function(err) {
+   gpio.write(16, true, function(err) {
      if (err) throw err;
    });
-   isOn = !isOn;
+  }, function () {
+    /* This function is executed when the job stops */
+  },
+  true
+ );
+var job = new CronJob('0 0 2 * * *', function() {
+   // Cycle the light
+   gpio.write(16, false, function(err) {
+     if (err) throw err;
+   });
   }, function () {
     /* This function is executed when the job stops */
   },
