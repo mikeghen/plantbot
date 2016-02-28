@@ -1,5 +1,5 @@
-// Platbot
-// by Mike Ghen @mikeghen
+// Plantbot
+// by Mike Ghen mike@mikeghen.com
 
 var gpio = require('rpi-gpio');
 var express = require('express');
@@ -11,7 +11,7 @@ gpio.setup(16, gpio.DIR_OUT, start_lights);
 function start_lights() { 
  // Set the cron job to turn the light on/off at 9:00am EST and 9:00pm EST
  var job = new CronJob('0 0 14 * * *', function() {
-   // Cycle the light
+   // Lights on
    gpio.write(16, true, function(err) {
      if (err) throw err;
    });
@@ -20,8 +20,8 @@ function start_lights() {
   },
   true
  );
-var job = new CronJob('0 0 2 * * *', function() {
-   // Cycle the light
+ var job = new CronJob('0 0 2 * * *', function() {
+   // Lights off
    gpio.write(16, false, function(err) {
      if (err) throw err;
    });
@@ -42,4 +42,12 @@ app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
 });
 
+function exit() {
+ // Clean up on exit, unexport GPIO pins
+ gpio.destroy(function() {
+  console.log('All pins unexported');
+ });
+ process.ext();
+}
 
+process.on('SIGINT', exit);
